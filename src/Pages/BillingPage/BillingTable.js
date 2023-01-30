@@ -7,6 +7,7 @@ import ReuseModal from '../../Shared/ResueModal/ReuseModal';
 import SmallSpinner from '../../Shared/SmallSpinner';
 import './Billing.css'
 import ConformationModal from '../../Shared/ConformaionModal/ConformationModal';
+import { toast } from 'react-hot-toast';
 
 const BillingTable = () => {
     const [loading, setLoading] = useState(false)
@@ -37,19 +38,25 @@ const BillingTable = () => {
     })
 
 
+    // get billling 
+
     useEffect(() => {
-        const url = `${process.env.REACT_APP_API_URL}/billing-list?page=${page}&size=${size}`;
-        console.log(page, size);
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                setCount(data.count);
-                setBillings(data.billings);
-            })
+        getallbilling()
     }, [page, size])
+
+    const getallbilling = () => {
+        axios.get(`${process.env.REACT_APP_API_URL}/api/billing-list?page=${page}&size=${size}`)
+            .then(res => {
+                console.log(res)
+                setCount(res.data.count);
+                setBillings(res.data.billings);
+            })
+    }
 
     const pages = Math.ceil(count / size);
 
+
+    // post billing 
 
     const addBillForm = (data) => {
         console.log(data)
@@ -65,8 +72,9 @@ const BillingTable = () => {
             .then(res => {
                 console.log(res)
                 if (res.data.acknowledged === true) {
-                    setAddBill(false)
                     setLoading(false)
+                    getallbilling()
+                    setAddBill(false)
                 }
                 refetch()
             })
@@ -78,6 +86,9 @@ const BillingTable = () => {
     }
 
 
+
+
+    // update billinng 
 
     const updateBillData = (data) => {
         console.log(data)
@@ -93,9 +104,11 @@ const BillingTable = () => {
             .then(res => {
                 console.log(res)
                 if (res?.data?.acknowledged === true) {
-                    setData(null)
-                    setLoading(false)
+                    toast.success('Billing Info Updated Successfully')
+                    getallbilling()
                     refetch()
+                    setLoading(false)
+                    setData(null)
                 }
                 setData(null)
             })
@@ -107,6 +120,9 @@ const BillingTable = () => {
     }
 
 
+
+    // delete billling 
+
     const handleDelete = (data) => {
         setLoading(true)
         axios.delete(`${process.env.REACT_APP_API_URL}/api/delete-billing/${deleteBill._id}`)
@@ -114,13 +130,16 @@ const BillingTable = () => {
                 console.log(res)
                 if (res?.data?.acknowledged === true) {
                     setLoading(false)
-                    setDeleteBill(null)
+                    getallbilling()
+                    toast.success('Billing Deleted Successfullly')
                     refetch()
+                    setDeleteBill(null)
                 }
             })
             .catch(err => {
                 console.log(err)
                 setLoading(false)
+                toast.success('Please check your internety Connection')
                 setDeleteBill(null)
             })
     }
@@ -130,6 +149,7 @@ const BillingTable = () => {
 
 
     console.log(billingdata)
+    console.log(billingdata.billings)
     return (
         <div className='max-w-7xl mx-auto px-5 lg:px-0 mb-16'>
             <div className='max-w-7xl mx-auto bg-gray-300 py-2 mt-11 mb-5 px-5'>

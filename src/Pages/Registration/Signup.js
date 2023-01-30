@@ -23,17 +23,16 @@ const Signup = () => {
         }
 
         setLoading(true)
-        // axios.post(`${process.env.REACT_APP_API_URL}/api/registration`, signupdata)
-        axios.post('http://localhost:5000/api/registration', signupdata)
+        axios.post('https://billing-expert-server.vercel.app/api/registration', signupdata)
             .then(res => {
                 console.log(res)
-                if(res.data.status === 'error'){
+                if (res.data.status === 'error') {
                     setLoading(false)
                     toast.error(res.data.message)
                 }
-                else{
+                else {
                     setLoading(false)
-                    navigate('/signin')
+                    navigate('/')
                     toast.success(res.data.message)
                 }
             })
@@ -119,7 +118,7 @@ const Signup = () => {
 
                             <div class="mt-6 text-center ">
                                 <a href="#" class="text-sm text-blue-500 hover:underline dark:text-blue-400">
-                                    Already have an account yet? <Link to='/signin' className='text-blue-500'>Sign in</Link>
+                                    Already have an account yet? <Link to='/' className='text-blue-500'>Sign in</Link>
                                 </a>
                             </div>
                         </div>

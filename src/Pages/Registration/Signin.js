@@ -22,7 +22,7 @@ const Signin = () => {
         }
 
         setLoading(true)
-        axios.post('http://localhost:5000/api/login', siginpdata)
+        axios.post('https://billing-expert-server.vercel.app/api/login', siginpdata)
             .then(res => {
                 console.log(res)
                 if (res.data.status === 'error') {
@@ -31,7 +31,7 @@ const Signin = () => {
                 }
                 else {
                     setLoading(false)
-                    navigate('/')
+                    navigate('/home')
                     toast.success(`${res.data.message}  ${res?.data?.data?.name}`)
                 }
             })
@@ -84,7 +84,7 @@ const Signin = () => {
                                     loading ?
                                         <SmallSpinner />
                                         :
-                                        " Sign Up"
+                                        " Sign In"
                                 }
                             </button>
 

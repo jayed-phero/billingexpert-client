@@ -15,7 +15,6 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                             <div class="mt-4">
                                 <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Full Name</label>
                                 <input id="LoggingEmailAddress" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type='text'
-                                    defaultValue={data?.name}
                                     {...register('name')}
                                     required
                                 />
@@ -24,7 +23,6 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                             <div class="mt-4">
                                 <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Email Address</label>
                                 <input id="LoggingEmailAddress" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="email"
-                                    defaultValue={data?.email}
                                     {...register('email')}
                                     required />
                             </div>
@@ -32,14 +30,12 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                             <div class="mt-4">
                                 <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Phone</label>
                                 <input id="LoggingEmailAddress" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="text"
-                                    defaultValue={data?.phone}
                                     {...register('phone')} required />
                             </div>
 
                             <div class="mt-4">
                                 <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="LoggingEmailAddress">Payable Ammount</label>
                                 <input id="LoggingEmailAddress" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="text"
-                                    defaultValue={data?.amount}
                                     {...register('amount')} required />
                             </div>
                             <div className="modal-action" onClick={setData=(null)}>
@@ -50,7 +46,6 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                                     'Submit'
                                 }
                                 </button>
-                                {/* onClick={() => setAddBill(!addbill)} */}
                             </div>
                         </div>
                     </form>
