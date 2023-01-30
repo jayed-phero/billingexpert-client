@@ -1,12 +1,56 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import SmallSpinner from '../../Shared/SmallSpinner';
 
 const Signin = () => {
+
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
+    const onSubmit = data => {
+        console.log(data)
+        const email = data.email
+        const password = data.pasword
+
+        const siginpdata = {
+            email,
+            password
+        }
+
+        setLoading(true)
+        // axios.post(`${process.env.REACT_APP_API_URL}/api/registration`, signupdata)
+        axios.post('http://localhost:5000/api/login', siginpdata)
+            .then(res => {
+                console.log(res)
+                if (res.data.status === 'error') {
+                    setLoading(false)
+                    toast.error(res.data.message)
+                }
+                else {
+                    setLoading(false)
+                    navigate('/')
+                    toast.success(`${res.data.message}  ${res?.data?.data?.name}`)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setLoading(false)
+            })
+    }
+
+    const handleGooglesubmit = () => {
+        toast.success("This section in not available right now!!!")
+    }
+
     return (
         <div>
             <section class="bg-gray-100 dark:bg-gray-900">
                 <div class="container flex items-center justify-center min-h-screen px-6 mx-auto">
-                    <form class="w-full max-w-md">
+                    <form onSubmit={handleSubmit(onSubmit)} class="w-full max-w-md">
                         <img class="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="" />
 
                         <h1 class="mt-3 text-2xl font-semibold text-gray-800 capitalize sm:text-3xl dark:text-white">sign In</h1>
@@ -18,7 +62,9 @@ const Signin = () => {
                                 </svg>
                             </span>
 
-                            <input type="email" class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Email address" />
+                            <input type="email" class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Email address" required
+                                {...register('email')}
+                            />
                         </div>
 
                         <div class="relative flex items-center mt-4">
@@ -28,17 +74,24 @@ const Signin = () => {
                                 </svg>
                             </span>
 
-                            <input type="password" class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
+                            <input type="password" class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password"
+                                {...register('password')}
+                            />
                         </div>
 
                         <div class="mt-6">
-                            <button class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
-                                Sign in
+                            <button type='submit' class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                                {
+                                    loading ?
+                                        <SmallSpinner />
+                                        :
+                                        " Sign Up"
+                                }
                             </button>
 
                             <p class="mt-4 text-center text-gray-600 dark:text-gray-400">or sign in with</p>
 
-                            <a href="#" class="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <a onClick={handleGooglesubmit} href="#" class="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <svg class="w-6 h-6 mx-2" viewBox="0 0 40 40">
                                     <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
                                     <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />

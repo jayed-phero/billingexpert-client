@@ -1,11 +1,15 @@
 import axios from 'axios';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import SmallSpinner from '../../Shared/SmallSpinner';
 
 const Signup = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
     const onSubmit = data => {
         console.log(data)
         const email = data.email
@@ -18,7 +22,25 @@ const Signup = () => {
             password
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/`)
+        setLoading(true)
+        // axios.post(`${process.env.REACT_APP_API_URL}/api/registration`, signupdata)
+        axios.post('http://localhost:5000/api/registration', signupdata)
+            .then(res => {
+                console.log(res)
+                if(res.data.status === 'error'){
+                    setLoading(false)
+                    toast.error(res.data.message)
+                }
+                else{
+                    setLoading(false)
+                    navigate('/signin')
+                    toast.success(res.data.message)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setLoading(false)
+            })
     }
 
 
@@ -74,7 +96,12 @@ const Signup = () => {
 
                         <div class="mt-6">
                             <button type='submit' class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
-                                Sign Up
+                                {
+                                    loading ?
+                                        <SmallSpinner />
+                                        :
+                                        " Sign Up"
+                                }
                             </button>
 
                             <p class="mt-4 text-center text-gray-600 dark:text-gray-400">or sign in with</p>
