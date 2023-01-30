@@ -22,7 +22,6 @@ const Signin = () => {
         }
 
         setLoading(true)
-        // axios.post(`${process.env.REACT_APP_API_URL}/api/registration`, signupdata)
         axios.post('http://localhost:5000/api/login', siginpdata)
             .then(res => {
                 console.log(res)

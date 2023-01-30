@@ -5,6 +5,8 @@ import { set, useForm } from 'react-hook-form';
 import ReusaModal from '../Home/ReusaModal';
 import ReuseModal from '../../Shared/ResueModal/ReuseModal';
 import SmallSpinner from '../../Shared/SmallSpinner';
+import './Billing.css'
+import ConformationModal from '../../Shared/ConformaionModal/ConformationModal';
 
 const BillingTable = () => {
     const [loading, setLoading] = useState(false)
@@ -14,14 +16,39 @@ const BillingTable = () => {
 
     const [billdata, setData] = useState(null)
 
+    const [deleteBill, setDeleteBill] = useState(null)
+
+    console.log(billdata)
+
+
+    const [count, setCount] = useState(0);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [billings, setBillings] = useState([])
+
+
 
 
     const { data: billingdata = [], isLoading, refetch } = useQuery({
         queryKey: ['api/billing-list'],
-        queryFn: () => fetch(`${process.env.REACT_APP_API_URL}/api/billing-list`)
+        queryFn: () => fetch(`${process.env.REACT_APP_API_URL}/api/billing-list?page=${page}&size=${size}`)
             .then(res => res.json())
 
     })
+
+
+    useEffect(() => {
+        const url = `${process.env.REACT_APP_API_URL}/billing-list?page=${page}&size=${size}`;
+        console.log(page, size);
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                setCount(data.count);
+                setBillings(data.billings);
+            })
+    }, [page, size])
+
+    const pages = Math.ceil(count / size);
 
 
     const addBillForm = (data) => {
@@ -39,11 +66,14 @@ const BillingTable = () => {
                 console.log(res)
                 if (res.data.acknowledged === true) {
                     setAddBill(false)
+                    setLoading(false)
                 }
                 refetch()
             })
             .catch(err => {
                 console.log(err)
+                setAddBill(false)
+                setLoading(false)
             })
     }
 
@@ -51,7 +81,7 @@ const BillingTable = () => {
 
     const updateBillData = (data) => {
         console.log(data)
-        const billdata = {
+        const billinfo = {
             name: data.name,
             email: data.email,
             phone: data.phone,
@@ -59,28 +89,49 @@ const BillingTable = () => {
 
         }
         setLoading(true)
-        axios.put(`${process.env.REACT_APP_API_URL}/api/update-billing/:${billdata._id}`, billdata)
+        axios.put(`${process.env.REACT_APP_API_URL}/api/update-billing/${billdata._id}`, billinfo)
             .then(res => {
                 console.log(res)
-                if (res.data.matchcount === true) {
-
+                if (res?.data?.acknowledged === true) {
                     setData(null)
+                    setLoading(false)
+                    refetch()
                 }
-                refetch()
+                setData(null)
             })
             .catch(err => {
                 console.log(err)
+                setData(null)
+                setLoading(false)
             })
     }
-    // useEffect(() => {
-    //     axios.get()
-    // }, [])
+
+
+    const handleDelete = (data) => {
+        setLoading(true)
+        axios.delete(`${process.env.REACT_APP_API_URL}/api/delete-billing/${deleteBill._id}`)
+            .then(res => {
+                console.log(res)
+                if (res?.data?.acknowledged === true) {
+                    setLoading(false)
+                    setDeleteBill(null)
+                    refetch()
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setLoading(false)
+                setDeleteBill(null)
+            })
+    }
+
+
 
 
 
     console.log(billingdata)
     return (
-        <div className='max-w-7xl mx-auto'>
+        <div className='max-w-7xl mx-auto px-5 lg:px-0 mb-16'>
             <div className='max-w-7xl mx-auto bg-gray-300 py-2 mt-11 mb-5 px-5'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-5 flex-1'>
@@ -104,49 +155,76 @@ const BillingTable = () => {
                     <thead>
                         <tr className='capitalized'>
                             <th className='border-r'>Biling ID</th>
-                            <th> Full Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Paid Amount</th>
-                            <th>ACtion</th>
+                            <th className='border-r'> Full Name</th>
+                            <th className='border-r'>Email</th>
+                            <th className='border-r'>Phone</th>
+                            <th className='border-r'>Paid Amount</th>
+                            <th className='border-r'>ACtion</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            billingdata.map(data =>
-                                <tr className='border'>
-                                    <th className='border-r'>{
+                            billings.map(data =>
+                                <tr className='border-2'>
+                                    <th className='border-r-2'>{
                                         loading ?
                                             <SmallSpinner />
                                             :
                                             `${data._id}`
                                     }</th>
-                                    <td>  {data.name}</td>
-                                    <td>{data.email}</td>
-                                    <td>{data.phone}</td>
-                                    <td>{data.amount}</td>
-                                    <td>
+                                    <td className='border-r-2'>  {data.name}</td>
+                                    <td className='border-r-2'>{data.email}</td>
+                                    <td className='border-r-2'>{data.phone}</td>
+                                    <td className='border-r-2 text-center'>{data.ammount}</td>
+                                    <td className='border-r-2'>
                                         <div className='flex items-center gap-3'>
-                                            <h3 className=' px-2 py-1 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center '>Delete</h3>
-                                            <label htmlFor="my-modal" className=' px-2 py-1 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center ' onClick={() => setData(data)}>Update</label>
+                                            <label htmlFor="my-modal-6" className=' px-2 py-1 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center ' onClick={() => setDeleteBill(data)}>Delete</label>
+                                            <label htmlFor="my-modall" className=' px-2 py-1 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center ' onClick={() => setData(data)}>Update</label>
                                         </div>
                                     </td>
                                 </tr>
                             )
                         }
                     </tbody>
-                    {/* <tfoot>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>company</th>
-                            <th>location</th>
-                            <th>Last Login</th>
-                            <th>Favorite Color</th>
-                        </tr>
-                    </tfoot> */}
                 </table>
+
+                <div className='mt-7'>
+                    <div class="flex items-center justify-center">
+                        <a href="#" class="flex items-center justify-center px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md cursor-not-allowed rtl:-scale-x-100 dark:bg-gray-800 dark:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+
+                        <div className='flex items-center gap-3'>
+
+                            {
+                                [...Array(pages).keys()].map(number => <button
+                                    key={number}
+                                    className={page === number ? 'flex items-center justify-center px-4 py-2 mx-1 text-white transition-colors duration-300 transform bg-blue-500 rounded-md rtl:-scale-x-100 dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200' : 'flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md rtl:-scale-x-100 dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200 border-2'}
+                                    onClick={() => setPage(number)}
+                                >
+                                    {number + 1}
+                                </button>)
+                            }
+
+                            <select className='border px-3 py-2 rounded outline-none' onChange={event => setSize(event.target.value)}>
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>
+
+
+
+                        <a href="#" class="flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md rtl:-scale-x-100 dark:bg-gray-800 dark:text-gray-200 hover:bg-blue-500 dark:hover:bg-blue-500 hover:text-white dark:hover:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             {
@@ -174,8 +252,18 @@ const BillingTable = () => {
                     title={"Update Bill Data"}
                     data={billdata}
                     setData={setData}
+                    loading={loading}
                 />
 
+            }
+
+            {
+                deleteBill &&
+                <ConformationModal
+                    handleDelete={handleDelete}
+                    data={deleteBill}
+                    loading={loading}
+                />
             }
         </div>
     );

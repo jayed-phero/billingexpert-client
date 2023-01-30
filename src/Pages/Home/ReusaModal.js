@@ -1,14 +1,16 @@
 import React from 'react';
+import SmallSpinner from '../../Shared/SmallSpinner';
 
-const ReusaModal = ({ handleSubmit, title, register, addbill, setAddBill, setData, data, addBillForm, updateBillData }) => {
+const ReusaModal = ({ handleSubmit, title, register, addbill, setAddBill, setData, data, addBillForm, updateBillData, loading }) => {
+    console.log(data)
     return (
         <div>
             <div>
-                <input type="checkbox" id="my-modal" className="modal-toggle" />
+                <input type="checkbox" id="my-modall" className="modal-toggle" />
                 <div className="modal">
                     <div className="modal-box relative">
                         <h3 className="font-bold text-lg text-center">{title}</h3>
-                        <label onClick={() => setAddBill(!addbill)} htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                        {/* <label onClick={() => setAddBill(!addbill)} htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label> */}
                         <form onSubmit={handleSubmit(updateBillData)}>
                             <div>
                                 <div class="mt-4">
@@ -41,8 +43,14 @@ const ReusaModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                                         defaultValue={data?.amount}
                                         {...register('amount')} required />
                                 </div>
-                                <div className="modal-action" onClick={setData = (null)}>
-                                    <button htmlFor="my-modal" type='submit' className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center "> Submit
+                                <div className="modal-action">
+                                    <button htmlFor="my-modal" type='submit' className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center ">
+                                        {
+                                            loading ?
+                                            <SmallSpinner/>
+                                            :
+                                            'Submit'
+                                        }
                                     </button>
                                     {/* onClick={() => setAddBill(!addbill)} */}
                                 </div>

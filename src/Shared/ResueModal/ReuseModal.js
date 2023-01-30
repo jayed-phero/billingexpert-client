@@ -10,7 +10,6 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
             <div className="modal">
                 <div className="modal-box relative">
                     <h3 className="font-bold text-lg text-center">{title}</h3>
-                    <label onClick={() => setAddBill(!addbill)} htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <form onSubmit={handleSubmit(addBillForm)}>
                         <div>
                             <div class="mt-4">
@@ -44,7 +43,7 @@ const ReuseModal = ({ handleSubmit, title, register, addbill, setAddBill, setDat
                                     {...register('amount')} required />
                             </div>
                             <div className="modal-action" onClick={setData=(null)}>
-                                <button  htmlFor="my-modal" type='submit' className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center "> {
+                                <button  type='submit' className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg md:w-1/2 hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50 text-center "> {
                                     loading ?
                                     <SmallSpinner/>
                                     :
